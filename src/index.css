@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #080810;
+    color: #f0ead6;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #f59e0b66; }
+}
+
+@layer components {
+
+  /* ── Grain texture ── */
+  .grain-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.55;
+  }
+
+  /* ── Glass card ── */
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* ── Waveform bars ── */
+  .wv-bar {
+    border-radius: 3px;
+    background: linear-gradient(to top, #b45309, #fbbf24);
+    transform-origin: bottom center;
+    transition: opacity 0.4s ease;
+    flex-shrink: 0;
+  }
+
+  .wv-bar.playing {
+    animation: wvBounce var(--dur, 0.5s) ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes wvBounce {
+    0%   { transform: scaleY(0.12); }
+    100% { transform: scaleY(1); }
+  }
+
+  /* ── Ambient blobs ── */
+  @keyframes blobDrift1 {
+    0%   { transform: translate(0px,   0px)  scale(1);    }
+    100% { transform: translate(50px,  35px) scale(1.12); }
+  }
+  @keyframes blobDrift2 {
+    0%   { transform: translate(0px,  0px)   scale(1);    }
+    100% { transform: translate(-40px,-30px) scale(0.93); }
+  }
+  @keyframes blobDrift3 {
+    0%   { transform: translate(0px, 0px)   scale(1);    }
+    100% { transform: translate(25px,-25px) scale(1.07); }
+  }
+
+  /* ── Song fade transition ── */
+  @keyframes songFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .song-enter { animation: songFadeIn 0.4s ease-out; }
+
+  /* ── Scrolling ticker ── */
+  .ticker-track {
+    display: flex;
+    white-space: nowrap;
+    animation: tickerScroll 55s linear infinite;
+  }
+
+  @keyframes tickerScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── Progress bar ── */
+  .progress-rail {
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.08);
+    position: relative;
+    cursor: pointer;
+    transition: height 0.15s;
+  }
+  .progress-rail:hover { height: 5px; }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #b45309, #fbbf24);
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fbbf24;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .progress-rail:hover .progress-fill::after { opacity: 1; }
+
+  /* ── Volume slider ── */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #fbbf24;
+    margin-top: -4.5px;
+    transition: transform 0.15s;
+  }
+  input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.2); }
+  input[type="range"]::-moz-range-track {
+    height: 3px; border-radius: 3px; background: rgba(255,255,255,0.1);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #fbbf24; border: none;
+  }
+
+  /* ── Loading skeleton ── */
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .skeleton {
+    background: linear-gradient(90deg, #1a1a2e 25%, #242438 50%, #1a1a2e 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.8s infinite;
+    border-radius: 6px;
+  }
+}
